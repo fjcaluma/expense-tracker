@@ -6,7 +6,6 @@ describe('Auth Endpoints', () => {
     // Clean up test data after all tests
     afterAll(async () => {
         await pool.query("DELETE FROM users WHERE email LIKE '%@example.com'");
-        await pool.end();
     });
 
     describe('POST /api/auth/signup', () => {

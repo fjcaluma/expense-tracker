@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 describe('Authentication Middleware', () => {
-    const validToken = jwt.sign({ userId: 'test-user-id' }, JWT_SECRET);
+    const validToken = jwt.sign({ userId: '550e8400-e29b-41d4-a716-446655440000' }, JWT_SECRET);
 
     it('should allow access with valid token', async () => {
         const res = await request(app)
