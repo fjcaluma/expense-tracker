@@ -1,0 +1,72 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'backend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: expense_tracker_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Run linter
+        working-directory: ./backend
+        run: npm run lint
+
+      - name: Run migrations
+        working-directory: ./backend
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d expense_tracker_test -f migrations/001_initial_schema.sql
+
+      - name: Run tests
+        working-directory: ./backend
+        run: npm test
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: expense_tracker_test
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          JWT_SECRET: test-secret-key
+
+      - name: Check test coverage
+        working-directory: ./backend
+        run: |
+          npm test -- --coverage -coverageReporters-json-summary
+          COVERAGE=$(cat coverage/coverage-summary.json | grep -o '"lines":{"total":[0-9.]*,"covered":[0-9.]*,"skipped":[0-9.]*,"pct":[0-9.]*' | grep -o 'pct":[0-9.]*' | cut -d':' -f2)
+          echo "Coverage: $COVERAGE%"
+          if (( $(echo "$COVERAGE < 70" | bc -l) )); then
+            echo "Test coverage below 70%"
+            exit 1
+          fi
