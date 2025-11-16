@@ -160,7 +160,7 @@ describe('Expense Endpoints', () => {
                 .get('/api/expenses')
                 .set('Authorization', `Bearer ${testToken}`);
 
-            const deletedExpense = getRes.body.find((e: any) => e.id === testExpenseId);
+            const deletedExpense = getRes.body.find((e: { id: string }) => e.id === testExpenseId);
             expect(deletedExpense).toBeUndefined();
         });
 
