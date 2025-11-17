@@ -1,6 +1,6 @@
 # Expense Tracker
 
-A full-stack web application for tracking personal expenses.
+A backend REST API for a web application to track personal expenses.
 
 ## Features
 - User authentication (JWT-based)
@@ -14,10 +14,6 @@ A full-stack web application for tracking personal expenses.
 - Deployed to production
 
 ## Tech Stack
-**Frontend:**
-- React
-- TypeScript
-
 **Backend:**
 - Node.js, Express, TypeScript
 - PostgreSQL database
@@ -30,7 +26,7 @@ A full-stack web application for tracking personal expenses.
 - Render for hosting
 
 ## Setup Instructions
-See `/backend/README.md` and `/frontend/README.md`
+See `/backend/README.md`
 
 ## Testing
 ```bash
